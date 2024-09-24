@@ -5,9 +5,9 @@ const sendEmail = require("../utilities/sendEmail");
 const User = require("../models/user");
 
 function generateDeliveryID() {
-  const timestamp = Date.now(); 
-  const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `TRK${timestamp}${randomPart}`; 
+  const shortTimestamp = Date.now().toString().slice(-7);
+  const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase(); 
+  return `TRK${shortTimestamp}${randomPart}`; 
 }
 exports.createDelivery = async (req, res) => {
   try {
@@ -51,7 +51,7 @@ exports.createDelivery = async (req, res) => {
       receiverMob,
       user: req.user._id,
       trackingId: deliveryID,
-      location: dropLocation
+      location: dropLocation,
     });
 
     const user = await User.findById(req.user._id);
@@ -60,7 +60,7 @@ exports.createDelivery = async (req, res) => {
     await sendEmail(
       user.email,
       "Delivery Soon!",
-      "Thank you for placing an order with DelFe. Your order will be delivered soon!"
+      `Thank you for placing an order with DelFe. Your Parcel Tracking ID is ${delivery.trackingId} Your order will be delivered soon!`
     );
 
     res.status(200).json({
