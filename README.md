@@ -2,8 +2,6 @@
 
 A Courier Delivery Service built using the MERN (MongoDB, Express.js, React.js, Node.js) stack. This application allows users to send courier orders easily, track their order history, and manage their orders. It also provides insightful statistics and charts to help users keep track of their courier activities.
 
-
-
 ## Tech Stack
 - **Server-side:** Node.js, Express.js, MongoDB, REST API
 - **Client-side:** React.js, jsPDF, HTML, SCSS, CSS, Tailwind CSS, ApexCharts.js
