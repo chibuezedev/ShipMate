@@ -4,6 +4,11 @@ const Counter = require("../models/counter");
 const sendEmail = require("../utilities/sendEmail");
 const User = require("../models/user");
 
+function generateDeliveryID() {
+  const timestamp = Date.now(); 
+  const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `TRK${timestamp}${randomPart}`; 
+}
 exports.createDelivery = async (req, res) => {
   try {
     const {
@@ -24,6 +29,10 @@ exports.createDelivery = async (req, res) => {
       receiverMob,
     } = req.body;
 
+    // Generate unique delivery ID
+
+    const deliveryID = await generateDeliveryID();
+
     const delivery = await Delivery.create({
       deliveryMode,
       //parcelType,
@@ -41,6 +50,8 @@ exports.createDelivery = async (req, res) => {
       receiverName,
       receiverMob,
       user: req.user._id,
+      trackingId: deliveryID,
+      location: dropLocation
     });
 
     const user = await User.findById(req.user._id);

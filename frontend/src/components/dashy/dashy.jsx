@@ -176,7 +176,7 @@ const Dashy = () => {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-6 mt-12 h-80 drop-shadow-lg">
+          <div className="grid grid-cols-3 gap-6 mt-12 h-60 drop-shadow-lg">
             <div className="bg-gradient-to-bl from-lime-100 to-emerald-600  rounded-lg ">
               <p className="text-2xl font-medium ps-6 mt-5">Total Spent</p>
               <p className="font-bold text-8xl text-center mt-12">

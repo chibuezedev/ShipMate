@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -45,9 +46,9 @@ const Form2 = () => {
                 <br /> Create an Account
               </h1>
               <p className="pr-3">
-                Lorem ipsum is placeholder text commonly used in the graphic,
-                print, and publishing industries for previewing layouts and
-                visual mockups
+                Welcome to DelFe, your trusted partner for reliable, fast, and
+                efficient deliveries! Whether you're sending a package across
+                town or across the country, we've got you covered.
               </p>
             </div>
           </div>
