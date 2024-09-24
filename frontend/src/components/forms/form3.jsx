@@ -25,8 +25,9 @@ const Form3 = () => {
   const [time, setTime] = useState("");
   const [payment, setPayment] = useState("");
   const [shipping, setShipping] = useState(0);
-  //const [gst, setGst] = useState('')
   const [insurance, setInsurance] = useState("");
+
+  //const [gst, setGst] = useState('')
   //const [total, setTotal] = useState('')
 
   const handleSubmit = async (e) => {
@@ -76,22 +77,25 @@ const Form3 = () => {
       .catch((err) => console.error(err));
   };
 
-  // const fetchGeoData = async () => {
-  //     try {
-  //         const response = await fetch(`https://place-autocomplete1.p.rapidapi.com/autocomplete/json?input=${pickupAddress}&radius=200`, {
-  //             method: 'GET',
-  //             headers: {
-  //                 'X-RapidAPI-Key': 'ca2c4e5d2emshfa30dae8ab6e530p134430jsn422ccf017300',
-  //                 'X-RapidAPI-Host': 'place-autocomplete1.p.rapidapi.com'
-  //             }
-  //         })
-  //         const result = await response.text();
-  //         console.log(result);
-  //     }
-  //     catch(e){
-  //         console.error(e)
-  //     }
-  // };
+  const fetchGeoData = async () => {
+    try {
+      const response = await fetch(
+        `https://place-autocomplete1.p.rapidapi.com/autocomplete/json?input=${pickupAddress}&radius=200`,
+        {
+          method: "GET",
+          headers: {
+            "X-RapidAPI-Key":
+              "ca2c4e5d2emshfa30dae8ab6e530p134430jsn422ccf017300",
+            "X-RapidAPI-Host": "place-autocomplete1.p.rapidapi.com",
+          },
+        }
+      );
+      const result = await response.text();
+      console.log(result);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const shippingCost = () => {
     if (deliveryType === "Within City") {

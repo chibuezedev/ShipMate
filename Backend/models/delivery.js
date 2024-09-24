@@ -61,6 +61,17 @@ const deliverySchema = mongoose.Schema(
     receiverMob: {
       type: Number,
     },
+    trackingId: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["Processing", "Delivered", "Cancelled", "In Transit"],
+      default: "In Transit",
+    },
+    location: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
