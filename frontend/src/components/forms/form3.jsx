@@ -27,9 +27,6 @@ const Form3 = () => {
   const [shipping, setShipping] = useState(0);
   const [insurance, setInsurance] = useState("");
 
-  //const [gst, setGst] = useState('')
-  //const [total, setTotal] = useState('')
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     await fetch("/api/v1/createDelivery", {

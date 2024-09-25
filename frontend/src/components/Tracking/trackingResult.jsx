@@ -50,8 +50,16 @@ function TrackingResult({ result }) {
           <dd className="text-gray-900">{result.status}</dd>
         </div>
         <div className="py-3 flex justify-between text-sm font-medium">
-          <dt className="text-gray-500">Location:</dt>
+          <dt className="text-gray-500">Current Location:</dt>
           <dd className="text-gray-900">{result.location}</dd>
+        </div>
+        <div className="py-3 flex justify-between text-sm font-medium">
+          <dt className="text-gray-500">PickUp Location:</dt>
+          <dd className="text-gray-900">{result.pickupLocation}</dd>
+        </div>
+        <div className="py-3 flex justify-between text-sm font-medium">
+          <dt className="text-gray-500">Receiver Name:</dt>
+          <dd className="text-gray-900">{result.receiverName}</dd>
         </div>
       </dl>
       <div className="mt-4 h-64 rounded-md overflow-hidden">
