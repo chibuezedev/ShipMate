@@ -1,203 +1,215 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../sidebar/sidebar";
-import Chart from "react-apexcharts";
-import "./dashy.css";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  Package,
+  Truck,
+  XOctagon,
+  DollarSign,
+  Home,
+  FileText,
+  User,
+  LogOut,
+  Menu,
+} from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
-
-const Dashy = () => {
-  const [current, setCurrent] = useState("");
-  const [cancel, setCancel] = useState("");
-  const [table, setTable] = useState([]);
-
-  useEffect(() => {
-    const fetchCountDelivery = async () => {
-      try {
-        const response = await fetch("/api/v1/countDelivery", {
-          method: "GET",
-        });
-        const data = await response.json();
-        setCurrent(data.count);
-      } catch (error) {
-        console.error("Error fetching countDelivery:", error);
-      }
-    };
-
-    const fetchGetCount = async () => {
-      try {
-        const response = await fetch("/api/v1/get-count", {
-          method: "GET",
-        });
-        const data = await response.json();
-        if (data.getSave && data.getSave[0]) {
-          setCancel(data.getSave[0].cancelCounter);
-        }
-      } catch (error) {
-        console.error("Error fetching get-count:", error);
-      }
-    };
-
-    const fetchMyOrder = async () => {
-      try {
-        const response = await fetch("/api/v1/myorder", {
-          method: "GET",
-        });
-        const data = await response.json();
-        setTable(data.order);
-        console.log(data.order.length);
-      } catch (error) {
-        console.error("Error fetching myorder:", error);
-      }
-    };
-
-    fetchCountDelivery();
-    fetchGetCount();
-    fetchMyOrder();
-  }, []);
-
-  const totalPriceTable = table.reduce((acc, curr) => acc + curr.totalPrice, 0);
-
+const Dashboard = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [current, setCurrent] = useState(0);
+  const [cancel, setCancel] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
   const [name, setName] = useState("");
+  const [monthlyData, setMonthlyData] = useState([]);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    fetch("/api/v1/userProfile")
-      .then((res) => res.json())
-      .then((data) => setName(data.user.name))
-      .catch((err) => console.error(err));
+    const fetchData = async () => {
+      try {
+        const [countDelivery, getCount, myOrder, userProfile, monthWise] =
+          await Promise.all([
+            fetch("/api/v1/countDelivery").then((res) => res.json()),
+            fetch("/api/v1/get-count").then((res) => res.json()),
+            fetch("/api/v1/myorder").then((res) => res.json()),
+            fetch("/api/v1/userProfile").then((res) => res.json()),
+            fetch(
+              `/api/v1/getMonthWise/${new Date().getFullYear()}/month-wise`
+            ).then((res) => res.json()),
+          ]);
+
+        setCurrent(countDelivery.count);
+        setCancel(getCount.getSave?.[0]?.cancelCounter || 0);
+        setTotal(
+          countDelivery.count + (getCount.getSave?.[0]?.cancelCounter || 0)
+        );
+        setTotalSpent(
+          myOrder.order.reduce((acc, curr) => acc + curr.totalPrice, 0)
+        );
+        setName(userProfile.user.name);
+        setMonthlyData(
+          Object.keys(monthWise).map((key) => ({
+            month: monthWise[key].month,
+            orders: monthWise[key].count,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const [stream, setStream] = useState("");
-  useEffect(() => {
-    const curryear = new Date().getFullYear();
-
-    fetch(`/api/v1/getMonthWise/${curryear}/month-wise`, {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res && res.length > 0) {
-          setStream(res);
-        }
-      })
-      .catch((e) => console.log(e));
-  }, []);
-
-  //console.log(stream);
-  //console.log(Object.keys(stream).map((key) => stream[key].count))
-  const series = [
-    {
-      name: "Monthly Orders",
-      data: Object.keys(stream).map((key) => stream[key].count) || null,
-    },
-  ];
-  const option = {
-    chart: {
-      height: 250,
-      type: "bar",
-      events: {
-        click: function (chart, w, e) {
-        },
-      },
-    },
-    //colors: colors,
-    plotOptions: {
-      bar: {
-        columnWidth: "25%",
-        distributed: true,
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    legend: {
-      show: false,
-    },
-    xaxis: {
-      categories: Object.keys(stream).map((key) => stream[key].month || null),
-      labels: {
-        style: {
-          //colors: colors,
-          fontSize: "16px",
-        },
-      },
-    },
+  const logout = async () => {
+    try {
+      await fetch("/api/v1/logout", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      navigate("/");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
 
-  const total = current + cancel;
+  const menuItems = [
+    { icon: Home, text: "Home", path: "/order" },
+    { icon: Truck, text: "Tracking", path: "/tracking" },
+    { icon: FileText, text: "Orders", path: "/history" },
+    { icon: User, text: "Profile", path: "/profile" },
+  ];
+
+  const StatCard = ({ title, value, icon: Icon, color }) => (
+    <div
+      className={`bg-white rounded-xl shadow-md p-6 flex items-center ${color}`}
+    >
+      <div className="mr-4">
+        <Icon size={48} className="text-white" />
+      </div>
+      <div>
+        <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
+        <p className="text-3xl font-bold text-gray-900">{value}</p>
+      </div>
+    </div>
+  );
+
   return (
-    <>
-      <div className="md:container md:mx-auto grid grid-cols-5 gap-x-2 h-screen">
-        <Sidebar />
-        <div className="col-span-4 pe-9 pt-10 ">
-          <div className="font-semibold text-xl">Welcome, {name}</div>
-          <div className="grid grid-cols-3 gap-6 mt-12 h-44 drop-shadow-lg">
-            <div className="bg-gradient-to-r from-cyan-500 to-slate-100 rounded-lg">
-              <p className="text-2xl font-medium ps-6 mt-5">Total Orders</p>
-              <div className="container mt-3 ps-12">
-                <div className="flex flex-row space-x-36">
-                  <p className="font-light text-7xl">{total || ""}</p>
-                  <img
-                    className=""
-                    src="https://cdn-icons-png.flaticon.com/512/9486/9486069.png"
-                    alt=""
-                    width="90"
-                    height="100"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="bg-gradient-to-r from-indigo-400 to-teal-100 rounded-lg">
-              <p className="text-2xl font-medium ps-6 mt-5">Current Orders</p>
-              <div className="container mt-3 ps-12">
-                <div className="flex flex-row space-x-36">
-                  <p className="font-light text-7xl">{current || ""}</p>
-                  <img
-                    className=""
-                    src="https://cdn-icons-png.flaticon.com/512/3091/3091609.png"
-                    alt=""
-                    width="90"
-                    height="100"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="bg-gradient-to-r from-rose-300 to-fuchsia-50 rounded-lg">
-              <p className="text-2xl font-medium ps-6 mt-5">Cancelled Orders</p>
-              <div className="container mt-3 ps-12">
-                <div className="flex flex-row space-x-36">
-                  <p className="font-light text-7xl">{cancel || ""}</p>
-                  <img
-                    className=""
-                    src="https://cdn-icons-png.flaticon.com/512/5161/5161449.png"
-                    alt=""
-                    width="90"
-                    height="100"
-                  />
-                </div>
-              </div>
-            </div>
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div
+        className={`h-full bg-gradient-to-b from-purple-700 to-indigo-800 text-white transition-all duration-300 ease-in-out ${
+          isCollapsed ? "w-20" : "w-64"
+        }`}
+      >
+        <div className="flex justify-between items-center p-4">
+          {!isCollapsed && <h2 className="text-2xl font-bold">Dashboard</h2>}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+        </div>
+        <nav className="mt-8">
+          <ul className="space-y-2">
+            {menuItems.map((item, index) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <li key={index}>
+                  <Link
+                    to={item.path}
+                    className={`flex items-center p-3 mx-3 rounded-xl transition-all duration-200 ${
+                      isActive
+                        ? "bg-white text-purple-700"
+                        : "hover:bg-white/10"
+                    }`}
+                  >
+                    <item.icon
+                      className={`w-6 h-6 ${isCollapsed ? "mx-auto" : "mr-4"}`}
+                    />
+                    {!isCollapsed && (
+                      <span className="text-sm font-medium">{item.text}</span>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+        <button
+          onClick={logout}
+          className={`flex items-center p-3 mx-3 mt-auto mb-8 bg-red-500 rounded-xl hover:bg-red-600 transition-colors duration-200 ${
+            isCollapsed ? "justify-center" : ""
+          }`}
+        >
+          <LogOut className={`w-6 h-6 ${isCollapsed ? "mx-auto" : "mr-4"}`} />
+          {!isCollapsed && <span className="text-sm font-medium">Logout</span>}
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="p-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">
+            Welcome, {name}
+          </h1>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatCard
+              title="Total Orders"
+              value={total}
+              icon={Package}
+              color="bg-blue-500"
+            />
+            <StatCard
+              title="Current Orders"
+              value={current}
+              icon={Truck}
+              color="bg-green-500"
+            />
+            <StatCard
+              title="Cancelled Orders"
+              value={cancel}
+              icon={XOctagon}
+              color="bg-red-500"
+            />
+            <StatCard
+              title="Total Spent"
+              value={`${totalSpent.toLocaleString()}`}
+              icon={DollarSign}
+              color="bg-purple-500"
+            />
           </div>
-          <div className="grid grid-cols-3 gap-6 mt-12 h-60 drop-shadow-lg">
-            <div className="bg-gradient-to-bl from-lime-100 to-emerald-600  rounded-lg ">
-              <p className="text-2xl font-medium ps-6 mt-5">Total Spent</p>
-              <p className="font-bold text-8xl text-center mt-12">
-                &#8358;{totalPriceTable}
-              </p>
-            </div>
-            <div className="bg-gradient-to-tl from-cyan-600 to-sky-100 col-span-2 rounded-lg">
-              <p className="text-2xl font-medium ps-6 mt-5">Monthly Orders</p>
-              <Chart
-                options={option}
-                series={series}
-                type="bar"
-                height={260}
-                width={770}
-              />
-            </div>
+
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Monthly Orders
+            </h2>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={monthlyData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="orders" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-export default Dashy;
+export default Dashboard;

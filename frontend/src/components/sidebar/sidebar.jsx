@@ -1,135 +1,81 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Home, Truck, FileText, User, LogOut, Menu } from "lucide-react";
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   const logout = async () => {
-    await fetch("/api/v1/logout", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then(() => navigate("/"))
-      .catch((err) => console.log(err));
+    try {
+      await fetch("/api/v1/logout", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      navigate("/");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
+
+  const menuItems = [
+    { icon: Home, text: "Home", path: "/order" },
+    { icon: Truck, text: "Tracking", path: "/tracking" },
+    { icon: FileText, text: "Orders", path: "/history" },
+    { icon: User, text: "Profile", path: "/profile" },
+  ];
+
   return (
-    <>
-      <div className="mt-2 mb-2 grid grid-cols-1">
-        <div className="bg-zinc-50 ms-8 me-8 h-10/11 rounded-2xl">
-          <div className="text-center mt-8 font-semibold text-xl">
-            Dashboard
-          </div>
-          <div className="text-center ms-16 mt-20 space-y-20">
-            <Link to="/order">
-              <p className="flex hover:text-indigo-800 transition ease-out duration-300 cursor-pointer">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-                  />
-                </svg>
-                <span className="text-lg font-medium ps-2 tracking-wide">
-                  Home
-                </span>
-              </p>
-            </Link>
-            <Link to="/tracking">
-              <p className="flex hover:text-indigo-800 transition ease-out duration-300 cursor-pointer mt-16">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <rect x="1" y="3" width="15" height="13"></rect>
-                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-                  <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                  <circle cx="18.5" cy="18.5" r="2.5"></circle>
-                </svg>
-                <span className="text-lg font-medium ps-2 tracking-wide">
-                  Tracking
-                </span>
-              </p>
-            </Link>
-            <Link to="/history">
-              <p className="flex mt-20 hover:text-blue-800 transition ease-out duration-300 cursor-pointer">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                  />
-                </svg>
-                <span className="text-lg font-medium ps-2 tracking-wide">
-                  Orders
-                </span>
-              </p>
-            </Link>
-            <p className="flex hover:text-blue-800 transition ease-out duration-300 cursor-pointer">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                stroke-width="2"
-                class="w-6 h-6"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <span className="text-lg font-medium ps-2 tracking-wide">
-                Profile
-              </span>
-            </p>
-          </div>
-          <div className="bg-red-300 mt-64 pb-3 pt-2 rounded-b-2xl">
-            <p className="flex ms-16 hover:text-white transition ease-out duration-300 cursor-pointer">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
-                />
-              </svg>
-              <span
-                className="text-lg font-medium ps-2 tracking-wide"
-                onClick={logout}
-              >
-                Logout
-              </span>
-            </p>
-          </div>
-        </div>
+    <div
+      className={`h-screen bg-gradient-to-b from-purple-700 to-indigo-800 text-white transition-all duration-300 ease-in-out ${
+        isCollapsed ? "w-20" : "w-64"
+      }`}
+    >
+      <div className="flex justify-between items-center p-4">
+        {!isCollapsed && <h2 className="text-2xl font-bold">Dashboard</h2>}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
       </div>
-    </>
+      <nav className="mt-8">
+        <ul className="space-y-2">
+          {menuItems.map((item, index) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <li key={index}>
+                <Link
+                  to={item.path}
+                  className={`flex items-center p-3 mx-3 rounded-xl transition-all duration-200 ${
+                    isActive ? "bg-white text-purple-700" : "hover:bg-white/10"
+                  }`}
+                >
+                  <item.icon
+                    className={`w-6 h-6 ${isCollapsed ? "mx-auto" : "mr-4"}`}
+                  />
+                  {!isCollapsed && (
+                    <span className="text-sm font-medium">{item.text}</span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+      <button
+        onClick={logout}
+        className={`flex items-center p-3 mx-3 mt-auto mb-8 bg-red-500 rounded-xl hover:bg-red-600 transition-colors duration-200 ${
+          isCollapsed ? "justify-center" : ""
+        }`}
+      >
+        <LogOut className={`w-6 h-6 ${isCollapsed ? "mx-auto" : "mr-4"}`} />
+        {!isCollapsed && <span className="text-sm font-medium">Logout</span>}
+      </button>
+    </div>
   );
 };
 

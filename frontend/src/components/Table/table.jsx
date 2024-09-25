@@ -1,140 +1,152 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../sidebar/sidebar";
-import "./table.scss";
+import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 
-const Table = () => {
-  const [table, setTable] = useState([]);
+const DeliveryTable = () => {
+  const [deliveries, setDeliveries] = useState([]);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedDeliveryId, setSelectedDeliveryId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("/api/v1/myorder", {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setTable(res.order);
-        console.log(res.order.length);
-      });
+    fetchDeliveries();
   }, []);
 
-  const deleteOrder = (id) => {
-    fetch(`/api/v1/cancel/${id}`, {
-      method: "DELETE",
-    })
-      .then(() => {
-        let c = window.confirm("Are you sure you want to cancel order");
-        if (c) {
-          setTable(table.filter((find) => find._id !== id));
-          alert("Order Cancelled");
-        } else {
-          alert("Order Cancelled Unsuccessful");
-        }
-      })
-      .catch((err) => console.log(err));
+  const fetchDeliveries = async () => {
+    try {
+      const response = await fetch("/api/v1/myorder");
+      const data = await response.json();
+      setDeliveries(data.order);
+    } catch (error) {
+      console.error("Error fetching deliveries:", error);
+    }
   };
 
-  const generateInvoice = (row) => {
+  const handleDeleteOrder = async () => {
+    if (!selectedDeliveryId) return;
+
+    try {
+      await fetch(`/api/v1/cancel/${selectedDeliveryId}`, {
+        method: "DELETE",
+      });
+      setDeliveries(
+        deliveries.filter((delivery) => delivery._id !== selectedDeliveryId)
+      );
+      setIsDeleteDialogOpen(false);
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+    }
+  };
+
+  const generateInvoice = (delivery) => {
     const doc = new jsPDF();
 
-    // doc.setTextColor(128, 0, 128); // Purple color
-    // doc.setFontSize(20);
-
-    // // Set text alignment for the header to "center"
-    // doc.text('DelFe', 105, 15, { align: 'center' });
-    // doc.text('---------------------------------------', 105, 15, { align: 'center' });
-    // // Set text color and font size for the content
-    // doc.setTextColor(0, 0, 0); // Black color
-    // doc.setFontSize(14);
-
     const content = `
-        Pickup Date & Time: ${row.dateTime}
-        Receiver Name: ${row.receiverName}
-        Pickup Address: ${row.pickupLocation}
-        Drop Address: ${row.dropLocation}
-        Package Weight: ${row.packageWeight}
-        Payment Mode: ${row.paymentMode}
-        Total Price: Rs ${row.totalPrice}
-        `;
+      Pickup Date & Time: ${delivery.dateTime}
+      Receiver Name: ${delivery.receiverName}
+      Pickup Address: ${delivery.pickupLocation}
+      Drop Address: ${delivery.dropLocation}
+      Package Weight: ${delivery.packageWeight}
+      Payment Mode: ${delivery.paymentMode}
+      Total Price: $ ${delivery.totalPrice}
+    `;
+
     doc.setFontSize(14);
     doc.text(content, 10, 10);
-
-    // Save or download the PDF
     doc.save("invoice.pdf");
   };
 
   return (
-    <>
-      <div className="md:container md:mx-auto grid grid-cols-5  gap-x-2 h-screen">
-        <Sidebar />
-        <div className="card col-span-4">
-          <section className="dash">
-            <h4>Deliveries</h4>
-            <section className="tableSection">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pickup Date & Time</th>
-                    <th>Package Weight</th>
-                    <th>Pickup Address</th>
-                    <th>Receiver Name</th>
-                    <th>Drop Address</th>
-                    <th>Payment Mode</th>
-                    <th>Total Bill</th>
-                    <th>Status</th>
-                    <th>Cancel Order</th>
-                    <th>Invoice</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {table.length > 0 ? (
-                    table.map((row, i) => (
-                      <tr key={i}>
-                        <td>{row.dateTime}</td>
-                        <td style={{ paddingLeft: "25px" }}>
-                          {row.packageWeight}
-                        </td>
-                        <td>{row.pickupLocation}</td>
-                        <td>{row.receiverName}</td>
-                        <td>{row.dropLocation}</td>
-                        <td style={{ paddingLeft: "40px" }}>
-                          {row.paymentMode}
-                        </td>
-                        <td>{row.totalPrice}</td>
-                        <td>{row.status}</td>
-                        <td style={{ paddingLeft: "40px" }}>
-                          <img //Cancel Order
-                            src="https://cdn-icons-png.flaticon.com/512/9426/9426995.png"
-                            alt="cancel delivery"
-                            width="20"
-                            height="20"
-                            onClick={() => deleteOrder(row._id)}
-                          />
-                        </td>
-                        <td style={{ paddingLeft: "20px" }}>
-                          <img //Download Order Invoice
-                            className="download"
-                            src="https://cdn-icons-png.flaticon.com/512/4208/4208382.png"
-                            alt="download invoice"
-                            width="25"
-                            height="25"
-                            onClick={() => generateInvoice(row)}
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={9}>Order History Empty...</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </section>
-          </section>
-        </div>
+    <div className="bg-white shadow-md rounded-lg p-6">
+      <h2 className="text-2xl font-bold mb-4">Deliveries</h2>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+              <th className="px-6 py-3">Date & Time</th>
+              <th className="px-6 py-3">Weight</th>
+              <th className="px-6 py-3">Pickup</th>
+              <th className="px-6 py-3">Receiver</th>
+              <th className="px-6 py-3">Drop-off</th>
+              <th className="px-6 py-3">Payment</th>
+              <th className="px-6 py-3">Total</th>
+              <th className="px-6 py-3">Status</th>
+              <th className="px-6 py-3">Tracking ID</th>
+              <th className="px-6 py-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {deliveries.length > 0 ? (
+              deliveries.map((delivery) => (
+                <tr key={delivery._id} className="bg-white border-b">
+                  <td className="px-6 py-4">{delivery.dateTime}</td>
+                  <td className="px-6 py-4">{delivery.packageWeight}</td>
+                  <td className="px-6 py-4">{delivery.pickupLocation}</td>
+                  <td className="px-6 py-4">{delivery.receiverName}</td>
+                  <td className="px-6 py-4">{delivery.dropLocation}</td>
+                  <td className="px-6 py-4">{delivery.paymentMode}</td>
+                  <td className="px-6 py-4">${delivery.totalPrice}</td>
+                  <td className="px-6 py-4">{delivery.status}</td>
+                  <td className="px-6 py-4">{delivery.trackingId}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => generateInvoice(delivery)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        📄
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedDeliveryId(delivery._id);
+                          setIsDeleteDialogOpen(true);
+                        }}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={10} className="px-6 py-4 text-center">
+                  No deliveries found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
-    </>
+
+      {isDeleteDialogOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg">
+            <h3 className="text-lg font-medium mb-4">Cancel Order</h3>
+            <p className="mb-4">
+              Are you sure you want to cancel this order? This action cannot be
+              undone.
+            </p>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setIsDeleteDialogOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteOrder}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default Table;
+export default DeliveryTable;
