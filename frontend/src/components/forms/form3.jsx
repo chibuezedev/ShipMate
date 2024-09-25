@@ -130,7 +130,7 @@ const Form3 = () => {
     shippingCost();
   }, [weight]);
   let gst = shipping * 0.18;
-  let total = shipping + gst + 15;
+  let total = shipping + gst + 8;
 
   return (
     <>
@@ -360,7 +360,7 @@ const Form3 = () => {
                         </label>
                         <br />
                         <label className="text-right " htmlFor="insurance">
-                          Add <span className="font-medium">&#8377;15</span>{" "}
+                          Add <span className="font-medium">$8</span>{" "}
                           Insurance
                         </label>
                         <br />
@@ -374,14 +374,14 @@ const Form3 = () => {
                         <label className="text-end">{gst.toFixed(2)}</label>
                         <br />
                         <label className="text-end " htmlFor="insurance">
-                          15.00
+                          8.00
                         </label>
                         <br />
                         <label
                           className="text-end font-extrabold text-lg"
                           htmlFor="total"
                         >
-                          &#8377;{total}
+                          ${total}
                         </label>
                       </div>
                       <div className="md:col-span-5">

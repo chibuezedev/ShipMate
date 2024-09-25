@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Home, Truck, FileText, User, LogOut, Menu } from "lucide-react";
+import { Home, Truck, FileText, User, LogOut, Menu, MailCheck } from "lucide-react";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -24,6 +24,7 @@ const Sidebar = () => {
     { icon: Home, text: "Home", path: "/order" },
     { icon: Truck, text: "Tracking", path: "/tracking" },
     { icon: FileText, text: "Orders", path: "/history" },
+    { icon: MailCheck, text: "Chats", path: "/chat" },
     { icon: User, text: "Profile", path: "/profile" },
   ];
 
