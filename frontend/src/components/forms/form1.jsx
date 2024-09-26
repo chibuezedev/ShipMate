@@ -21,7 +21,7 @@ const Form1 = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          navigate("/order");
+          navigate("/dashboard");
         } else {
           alert("Wrong Credentials");
           navigate("/");
