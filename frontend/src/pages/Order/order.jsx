@@ -6,13 +6,8 @@ import './order.css'
 const Order = () => {
   return (
     <>
-      <div className='bg-stone-200'>
-        <Navbar/>
-        <div className='main'>
-          <Form3/>
-        </div>
-      </div>
-
+      <Navbar />
+      <Form3 />
     </>
   )
 }
