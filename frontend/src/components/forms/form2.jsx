@@ -46,7 +46,7 @@ const Form2 = () => {
                 <br /> Create an Account
               </h1>
               <p className="pr-3">
-                Welcome to DelFe, your trusted partner for reliable, fast, and
+                Welcome to ShipMate, your trusted partner for reliable, fast, and
                 efficient deliveries! Whether you're sending a package across
                 town or across the country, we've got you covered.
               </p>
