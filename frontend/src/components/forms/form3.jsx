@@ -121,7 +121,7 @@ const DeliveryForm = () => {
           <div className="mx-auto">
             <div className="flex items-center space-x-5">
               <div className="h-14 w-14 bg-indigo-500 rounded-full flex flex-shrink-0 justify-center items-center text-white text-2xl font-mono">
-                D
+                S
               </div>
               <div className="block pl-2 font-semibold text-xl self-start text-gray-700">
                 <h2 className="leading-relaxed">Create Delivery Order</h2>
