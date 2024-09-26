@@ -322,19 +322,19 @@ const DeliveryForm = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Shipping Cost</span>
-                  <span>₹{shipping}</span>
+                  <span>${shipping}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>GST (18%)</span>
-                  <span>₹{gst.toFixed(2)}</span>
+                  <span>${gst.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Insurance</span>
-                  <span>₹{insurance}</span>
+                  <span>${insurance}</span>
                 </div>
                 <div className="flex justify-between items-center font-bold">
                   <span>Total</span>
-                  <span>₹{total.toFixed(2)}</span>
+                  <span>${total.toFixed(2)}</span>
                 </div>
               </div>
               <div className="pt-4 flex items-center space-x-4">
