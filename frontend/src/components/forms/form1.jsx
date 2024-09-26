@@ -39,7 +39,7 @@ const Form1 = () => {
                 Hello! I'm glad to see you again.
               </h1>
               <p className="pr-3">
-                Welcome Back Champ to DelFe, your trusted partner for reliable, fast, and
+                Welcome Back Champ to ShipMate, your trusted partner for reliable, fast, and
                 efficient deliveries! Whether you're sending a package across
                 town or across the country, we've got you covered.
               </p>

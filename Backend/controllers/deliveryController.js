@@ -60,7 +60,9 @@ exports.createDelivery = async (req, res) => {
     await sendEmail(
       user.email,
       "Delivery Soon!",
-      `Thank you for placing an order with DelFe. Your Parcel Tracking ID is ${delivery.trackingId} Your order will be delivered soon!`
+      `Thank you for placing an order with ShipMate. 
+      Your Parcel Tracking ID is ${delivery.trackingId}.
+      Your order will be delivered soon!`
     );
 
     res.status(200).json({
