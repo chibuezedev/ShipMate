@@ -6,8 +6,8 @@ const User = require("../models/user");
 
 function generateDeliveryID() {
   const shortTimestamp = Date.now().toString().slice(-7);
-  const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase(); 
-  return `TRK${shortTimestamp}${randomPart}`; 
+  const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
+  return `TRK${shortTimestamp}${randomPart}`;
 }
 exports.createDelivery = async (req, res) => {
   try {

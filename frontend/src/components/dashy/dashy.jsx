@@ -18,6 +18,7 @@ import {
   User,
   LogOut,
   Menu,
+  MailCheck
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
@@ -84,9 +85,10 @@ const Dashboard = () => {
   };
 
   const menuItems = [
-    { icon: Home, text: "Home", path: "/order" },
-    { icon: Truck, text: "Tracking", path: "/tracking" },
+    { icon: Home, text: "Ship", path: "/order" },
     { icon: FileText, text: "Orders", path: "/history" },
+    { icon: Truck, text: "Tracking", path: "/tracking" },
+    { icon: MailCheck, text: "Chats", path: "/chat" },
     { icon: User, text: "Profile", path: "/profile" },
   ];
 

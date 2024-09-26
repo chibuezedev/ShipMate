@@ -6,6 +6,8 @@ import Order from "./pages/Order/order";
 import Dashboard from "./pages/Dashboard/dashboard";
 import History from "./pages/History/history";
 import Tracking from "./pages/Tracking/tracking";
+import Chat from "./pages/Chat";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route exact path='/dashboard' element={<Dashboard />} />        
         <Route exact path='/history' element={<History />} /> 
         <Route exact path='/tracking' element={<Tracking />} />
+        <Route exact path='/chat' element={<Chat />} />
+        <Route exact path='/profile' element={<Profile />} />
       </Routes>
     </>
   );
